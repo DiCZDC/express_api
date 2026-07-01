@@ -7,18 +7,46 @@ app.use(express.json(), cors());
 // Conexión
 mongoose.connect('mongodb://localhost:27017/express-mongo');
 
+// Contador para IDs consecutivos
+const Counter = mongoose.model('Counter', new mongoose.Schema({
+  _id: String,
+  seq: { type: Number, default: 0 }
+}));
+
+async function siguienteId(nombre) {
+  const contador = await Counter.findByIdAndUpdate(
+    nombre,
+    { $inc: { seq: 1 } },
+    { new: true, upsert: true }
+  );
+  return contador.seq;
+}
+
+function conIdAutoincremental(schema, nombre) {
+  schema.pre('save', async function () {
+    if (this.isNew) this._id = await siguienteId(nombre);
+  });
+  return schema;
+}
+
 // Schemas
-const Usuario = mongoose.model('Usuario', {
+const usuarioSchema = conIdAutoincremental(new mongoose.Schema({
+  _id: Number,
   usuario: String, password: String, rol: String
-});
+}), 'usuario');
+const Usuario = mongoose.model('Usuario', usuarioSchema);
 
-const Articulo = mongoose.model('Articulo', {
+const articuloSchema = conIdAutoincremental(new mongoose.Schema({
+  _id: Number,
   nombre: String, precio: Number, stock: Number
-});
+}), 'articulo');
+const Articulo = mongoose.model('Articulo', articuloSchema);
 
-const Cliente = mongoose.model('Cliente', {
+const clienteSchema = conIdAutoincremental(new mongoose.Schema({
+  _id: Number,
   nombre: String, email: String, telefono: String
-});
+}), 'cliente');
+const Cliente = mongoose.model('Cliente', clienteSchema);
 
 app.get('/', (req, res) => {
   res.json({ mensaje: 'API funcionando' });
