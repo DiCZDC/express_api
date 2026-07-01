@@ -1,0 +1,94 @@
+@base = http://localhost:3000
+
+### Health check
+GET {{base}}/
+
+###
+# ── USUARIOS ──────────────────────────────────────────────
+
+### Listar todos
+GET {{base}}/usuarios
+
+### Obtener por ID (reemplaza el ID)
+GET {{base}}/usuarios/USUARIO_ID
+
+### Crear
+POST {{base}}/usuarios
+Content-Type: application/json
+
+{
+  "usuario": "admin",
+  "password": "1234",
+  "rol": "admin"
+}
+
+### Actualizar (reemplaza el ID)
+PUT {{base}}/usuarios/USUARIO_ID
+Content-Type: application/json
+
+{
+  "usuario": "admin_v2",
+  "password": "5678",
+  "rol": "editor"
+}
+
+### Eliminar (reemplaza el ID)
+DELETE {{base}}/usuarios/USUARIO_ID
+
+###
+# ── ARTÍCULOS ─────────────────────────────────────────────
+
+### Listar todos
+GET {{base}}/articulos
+
+### Crear
+POST {{base}}/articulos
+Content-Type: application/json
+
+{
+  "nombre": "Teclado mecánico",
+  "precio": 850,
+  "stock": 15
+}
+
+### Actualizar (reemplaza el ID)
+PUT {{base}}/articulos/ARTICULO_ID
+Content-Type: application/json
+
+{
+  "nombre": "Teclado mecánico RGB",
+  "precio": 950,
+  "stock": 10
+}
+
+### Eliminar (reemplaza el ID)
+DELETE {{base}}/articulos/ARTICULO_ID
+
+###
+# ── CLIENTES ──────────────────────────────────────────────
+
+### Listar todos
+GET {{base}}/clientes
+
+### Crear
+POST {{base}}/clientes
+Content-Type: application/json
+
+{
+  "nombre": "Juan Pérez",
+  "email": "juan@example.com",
+  "telefono": "5551234567"
+}
+
+### Actualizar (reemplaza el ID)
+PUT {{base}}/clientes/CLIENTE_ID
+Content-Type: application/json
+
+{
+  "nombre": "Juan Pérez López",
+  "email": "juan.lopez@example.com",
+  "telefono": "5559876543"
+}
+
+### Eliminar (reemplaza el ID)
+DELETE {{base}}/clientes/CLIENTE_ID

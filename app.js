@@ -1,83 +1,54 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 const app = express();
+app.use(express.json(), cors());
 
-app.use(express.json());
+// Conexión
+mongoose.connect('mongodb://localhost:27017/express-mongo');
 
-let usuarios = [
-  { id: 1, usuario: 'juan', password: '1234', rol: 'admin' },
-  { id: 2, usuario: 'ana', password: 'abcd', rol: 'user' }
-];
+// Schemas
+const Usuario = mongoose.model('Usuario', {
+  usuario: String, password: String, rol: String
+});
+
+const Articulo = mongoose.model('Articulo', {
+  nombre: String, precio: Number, stock: Number
+});
+
+const Cliente = mongoose.model('Cliente', {
+  nombre: String, email: String, telefono: String
+});
 
 app.get('/', (req, res) => {
   res.json({ mensaje: 'API funcionando' });
 });
-
-app.get('/usuarios', (req, res) => {
-  res.json(usuarios);
+// CRUD USUARIOS
+app.get('/usuarios', async (req,res) => res.json(await Usuario.find()));
+app.get('/usuarios/:id', async (req,res) => {
+  const u = await Usuario.findById(req.params.id);
+  u ? res.json(u) : res.status(404).json({error: "No existe"});
+});
+app.post('/usuarios', async (req,res) => res.status(201).json(await Usuario.create(req.body)));
+app.put('/usuarios/:id', async (req,res) => {
+  const u = await Usuario.findByIdAndUpdate(req.params.id, req.body, {new:true});
+  u ? res.json(u) : res.status(404).json({error: "No existe"});
+});
+app.delete('/usuarios/:id', async (req,res) => {
+  const r = await Usuario.findByIdAndDelete(req.params.id);
+  r ? res.json({mensaje: "Usuario eliminado"}) : res.status(404).json({error: "No existe"});
 });
 
-app.get('/usuarios/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const usuario = usuarios.find(u => u.id === id);
+// CRUD ARTÍCULOS
+app.get('/articulos', async (req,res) => res.json(await Articulo.find()));
+app.post('/articulos', async (req,res) => res.status(201).json(await Articulo.create(req.body)));
+app.put('/articulos/:id', async (req,res) => res.json(await Articulo.findByIdAndUpdate(req.params.id, req.body, {new:true})));
+app.delete('/articulos/:id', async (req,res) => res.json(await Articulo.findByIdAndDelete(req.params.id)));
 
-  if (!usuario) {
-    return res.status(404).json({ mensaje: 'Usuario no encontrado' });
-  }
+// CRUD CLIENTES
+app.get('/clientes', async (req,res) => res.json(await Cliente.find()));
+app.post('/clientes', async (req,res) => res.status(201).json(await Cliente.create(req.body)));
+app.put('/clientes/:id', async (req,res) => res.json(await Cliente.findByIdAndUpdate(req.params.id, req.body, {new:true})));
+app.delete('/clientes/:id', async (req,res) => res.json(await Cliente.findByIdAndDelete(req.params.id)));
 
-  res.json(usuario);
-});
-
-app.post('/usuarios', (req, res) => {
-  const { usuario, password, rol } = req.body;
-
-  if (!usuario || !password || !rol) {
-    return res.status(400).json({ mensaje: 'Faltan datos' });
-  }
-
-  const nuevoUsuario = {
-    id: usuarios.length ? usuarios[usuarios.length - 1].id + 1 : 1,
-    usuario,
-    password,
-    rol
-  };
-
-  usuarios.push(nuevoUsuario);
-  res.status(201).json(nuevoUsuario);
-});
-
-app.put('/usuarios/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const { usuario, password, rol } = req.body;
-
-  const index = usuarios.findIndex(u => u.id === id);
-
-  if (index === -1) {
-    return res.status(404).json({ mensaje: 'Usuario no encontrado' });
-  }
-
-  usuarios[index] = {
-    id,
-    usuario: usuario ?? usuarios[index].usuario,
-    password: password ?? usuarios[index].password,
-    rol: rol ?? usuarios[index].rol
-  };
-
-  res.json(usuarios[index]);
-});
-
-app.delete('/usuarios/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const index = usuarios.findIndex(u => u.id === id);
-
-  if (index === -1) {
-    return res.status(404).json({ mensaje: 'Usuario no encontrado' });
-  }
-
-  const eliminado = usuarios.splice(index, 1);
-  res.json({ mensaje: 'Usuario eliminado', usuario: eliminado[0] });
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+app.listen(3000, () => console.log('API + Mongo en http://localhost:3000'));

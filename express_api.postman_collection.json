@@ -1,0 +1,133 @@
+{
+  "info": {
+    "name": "Express API - CRUD",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base", "value": "http://localhost:3000" }
+  ],
+  "item": [
+    {
+      "name": "Health check",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/"
+      }
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "Listar todos",
+          "request": { "method": "GET", "url": "{{base}}/usuarios" }
+        },
+        {
+          "name": "Obtener por ID",
+          "request": { "method": "GET", "url": "{{base}}/usuarios/{{usuario_id}}" }
+        },
+        {
+          "name": "Crear",
+          "request": {
+            "method": "POST",
+            "url": "{{base}}/usuarios",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"admin\",\n  \"password\": \"1234\",\n  \"rol\": \"admin\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "PUT",
+            "url": "{{base}}/usuarios/{{usuario_id}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"admin_v2\",\n  \"password\": \"5678\",\n  \"rol\": \"editor\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar",
+          "request": { "method": "DELETE", "url": "{{base}}/usuarios/{{usuario_id}}" }
+        }
+      ]
+    },
+    {
+      "name": "Artículos",
+      "item": [
+        {
+          "name": "Listar todos",
+          "request": { "method": "GET", "url": "{{base}}/articulos" }
+        },
+        {
+          "name": "Crear",
+          "request": {
+            "method": "POST",
+            "url": "{{base}}/articulos",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Teclado mecánico\",\n  \"precio\": 850,\n  \"stock\": 15\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "PUT",
+            "url": "{{base}}/articulos/{{articulo_id}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Teclado mecánico RGB\",\n  \"precio\": 950,\n  \"stock\": 10\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar",
+          "request": { "method": "DELETE", "url": "{{base}}/articulos/{{articulo_id}}" }
+        }
+      ]
+    },
+    {
+      "name": "Clientes",
+      "item": [
+        {
+          "name": "Listar todos",
+          "request": { "method": "GET", "url": "{{base}}/clientes" }
+        },
+        {
+          "name": "Crear",
+          "request": {
+            "method": "POST",
+            "url": "{{base}}/clientes",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan Pérez\",\n  \"email\": \"juan@example.com\",\n  \"telefono\": \"5551234567\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "PUT",
+            "url": "{{base}}/clientes/{{cliente_id}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan Pérez López\",\n  \"email\": \"juan.lopez@example.com\",\n  \"telefono\": \"5559876543\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar",
+          "request": { "method": "DELETE", "url": "{{base}}/clientes/{{cliente_id}}" }
+        }
+      ]
+    }
+  ]
+}
