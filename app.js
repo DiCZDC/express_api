@@ -6,6 +6,7 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const verifyToken = require('./middleware/auth');
+const { verifyAdmin } = require('./middleware/auth');
 
 const app = express();
 app.use(express.json(), cors());
@@ -94,13 +95,13 @@ app.post('/usuarios', async (req,res) => {
     res.status(400).json({ error: err.message });
   }
 });
-app.put('/usuarios/:id', verifyToken, async (req,res) => {
+app.put('/usuarios/:id', verifyToken, verifyAdmin, async (req,res) => {
   const datos = { ...req.body };
   if (datos.password) datos.password = await bcrypt.hash(datos.password, 10);
   const u = await Usuario.findByIdAndUpdate(req.params.id, datos, {new:true}).select('-password');
   u ? res.json(u) : res.status(404).json({error: "No existe"});
 });
-app.delete('/usuarios/:id', verifyToken, async (req,res) => {
+app.delete('/usuarios/:id', verifyToken, verifyAdmin, async (req,res) => {
   const r = await Usuario.findByIdAndDelete(req.params.id);
   r ? res.json({mensaje: "Usuario eliminado"}) : res.status(404).json({error: "No existe"});
 });
@@ -108,13 +109,13 @@ app.delete('/usuarios/:id', verifyToken, async (req,res) => {
 // CRUD ARTÍCULOS
 app.get('/articulos', verifyToken, async (req,res) => res.json(await Articulo.find()));
 app.post('/articulos', verifyToken, async (req,res) => res.status(201).json(await Articulo.create(req.body)));
-app.put('/articulos/:id', verifyToken, async (req,res) => res.json(await Articulo.findByIdAndUpdate(req.params.id, req.body, {new:true})));
-app.delete('/articulos/:id', verifyToken, async (req,res) => res.json(await Articulo.findByIdAndDelete(req.params.id)));
+app.put('/articulos/:id', verifyToken, verifyAdmin, async (req,res) => res.json(await Articulo.findByIdAndUpdate(req.params.id, req.body, {new:true})));
+app.delete('/articulos/:id', verifyToken, verifyAdmin, async (req,res) => res.json(await Articulo.findByIdAndDelete(req.params.id)));
 
 // CRUD CLIENTES
 app.get('/clientes', verifyToken, async (req,res) => res.json(await Cliente.find()));
 app.post('/clientes', verifyToken, async (req,res) => res.status(201).json(await Cliente.create(req.body)));
-app.put('/clientes/:id', verifyToken, async (req,res) => res.json(await Cliente.findByIdAndUpdate(req.params.id, req.body, {new:true})));
-app.delete('/clientes/:id', verifyToken, async (req,res) => res.json(await Cliente.findByIdAndDelete(req.params.id)));
+app.put('/clientes/:id', verifyToken, verifyAdmin, async (req,res) => res.json(await Cliente.findByIdAndUpdate(req.params.id, req.body, {new:true})));
+app.delete('/clientes/:id', verifyToken, verifyAdmin, async (req,res) => res.json(await Cliente.findByIdAndDelete(req.params.id)));
 
 app.listen(process.env.PORT || 3000, () => console.log(`API + Mongo en http://localhost:${process.env.PORT || 3000}`));
