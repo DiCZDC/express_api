@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Usuarios</title>
+<link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+<script src="/nav.js"></script>
+<h1>Usuarios</h1>
+<p><a href="/registro.html">+ Nuevo usuario</a></p>
+<table>
+  <thead><tr><th>ID</th><th>Usuario</th><th>Rol</th><th></th></tr></thead>
+  <tbody id="lista"></tbody>
+</table>
+<p class="mensaje" id="mensaje"></p>
+
+<script>
+const headers = () => ({
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + localStorage.getItem('token')
+});
+
+async function cargar() {
+  const res = await fetch('/usuarios', { headers: headers() });
+  if (!res.ok) {
+    document.getElementById('mensaje').textContent = 'Inicia sesión para ver los usuarios';
+    return;
+  }
+  const items = await res.json();
+  document.getElementById('lista').innerHTML = items.map(u => `
+    <tr>
+      <td>${u._id}</td>
+      <td>${u.usuario}</td>
+      <td>${u.rol}</td>
+      <td><button onclick="eliminar(${u._id})">Eliminar</button></td>
+    </tr>
+  `).join('');
+}
+
+async function eliminar(id) {
+  await fetch('/usuarios/' + id, { method: 'DELETE', headers: headers() });
+  cargar();
+}
+
+cargar();
+</script>
+</body>
+</html>

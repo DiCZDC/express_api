@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Registro</title>
+<link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+<script src="/nav.js"></script>
+<h1>Registro de usuario</h1>
+<form id="form">
+  <input name="usuario" placeholder="Usuario" required>
+  <input name="password" type="password" placeholder="Contraseña" required>
+  <select name="rol">
+    <option value="user">user</option>
+    <option value="admin">admin</option>
+  </select>
+  <button type="submit">Registrarse</button>
+</form>
+<p class="mensaje" id="mensaje"></p>
+
+<script>
+document.getElementById('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const datos = Object.fromEntries(new FormData(e.target));
+  const res = await fetch('/usuarios', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(datos)
+  });
+  const data = await res.json();
+  const mensaje = document.getElementById('mensaje');
+  if (res.ok) {
+    mensaje.style.color = 'green';
+    mensaje.textContent = 'Usuario creado. Ya puedes iniciar sesión.';
+    e.target.reset();
+  } else {
+    mensaje.style.color = '#b00020';
+    mensaje.textContent = data.error || 'Error al registrar';
+  }
+});
+</script>
+</body>
+</html>

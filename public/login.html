@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+<script src="/nav.js"></script>
+<h1>Iniciar sesión</h1>
+<form id="form">
+  <input name="usuario" placeholder="Usuario" required>
+  <input name="password" type="password" placeholder="Contraseña" required>
+  <button type="submit">Entrar</button>
+</form>
+<p class="mensaje" id="mensaje"></p>
+
+<script>
+document.getElementById('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const datos = Object.fromEntries(new FormData(e.target));
+  const res = await fetch('/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(datos)
+  });
+  const data = await res.json();
+  const mensaje = document.getElementById('mensaje');
+  if (res.ok) {
+    localStorage.setItem('token', data.token);
+    mensaje.style.color = 'green';
+    mensaje.textContent = 'Sesión iniciada correctamente';
+  } else {
+    mensaje.style.color = '#b00020';
+    mensaje.textContent = data.error || 'Error al iniciar sesión';
+  }
+});
+</script>
+</body>
+</html>
