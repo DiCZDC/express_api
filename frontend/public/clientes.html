@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Clientes</title>
+<link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+<script src="/config.js"></script>
+<script src="/nav.js"></script>
+<h1>Clientes</h1>
+<form id="form">
+  <input name="nombre" placeholder="Nombre" required>
+  <input name="email" type="email" placeholder="Email" required>
+  <input name="telefono" placeholder="Teléfono" required>
+  <button type="submit">Agregar</button>
+</form>
+<table>
+  <thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th></th></tr></thead>
+  <tbody id="lista"></tbody>
+</table>
+<p class="mensaje" id="mensaje"></p>
+
+<script>
+const headers = () => ({
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + localStorage.getItem('token')
+});
+
+async function cargar() {
+  const res = await fetch(API_URL + '/clientes', { headers: headers() });
+  if (!res.ok) {
+    document.getElementById('mensaje').textContent = 'Inicia sesión para ver los clientes';
+    return;
+  }
+  const items = await res.json();
+  document.getElementById('lista').innerHTML = items.map(c => `
+    <tr>
+      <td>${c._id}</td>
+      <td>${c.nombre}</td>
+      <td>${c.email}</td>
+      <td>${c.telefono}</td>
+      <td><button onclick="eliminar(${c._id})">Eliminar</button></td>
+    </tr>
+  `).join('');
+}
+
+async function eliminar(id) {
+  await fetch(API_URL + '/clientes/' + id, { method: 'DELETE', headers: headers() });
+  cargar();
+}
+
+document.getElementById('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const datos = Object.fromEntries(new FormData(e.target));
+  const res = await fetch(API_URL + '/clientes', { method: 'POST', headers: headers(), body: JSON.stringify(datos) });
+  if (res.ok) { e.target.reset(); cargar(); }
+  else document.getElementById('mensaje').textContent = 'Error al agregar el cliente';
+});
+
+cargar();
+</script>
+</body>
+</html>
