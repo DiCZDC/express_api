@@ -6,5 +6,5 @@ const path = require('path');
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
-const PORT = 5500;
+const PORT = 8000;
 app.listen(PORT, () => console.log(`Front en http://localhost:${PORT}`));
